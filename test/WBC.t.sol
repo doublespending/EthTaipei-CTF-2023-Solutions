@@ -22,13 +22,7 @@ contract WBCTest is Test {
         wbc = base.wbc();
     }
 
-    function testExploit() external {
-        uint256 salt = 1;
-        ans = new Ans{salt: bytes32(salt)}(address(wbc));
-        ans.win();
-        base.solve();
-        assertTrue(base.isSolved());
-    }
+    function testExploit() external {}
 
     function testCannotHomeRunEasily() external {
         vm.expectRevert("try again");

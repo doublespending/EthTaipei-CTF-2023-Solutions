@@ -21,7 +21,7 @@ contract ArcadeTest is Test {
         uint256 fullScore = 100;
 
         vm.startPrank(you);
-        arcadeBase = new ArcadeBase(startTime,endTime,fullScore);
+        arcadeBase = new ArcadeBase(startTime, endTime, fullScore);
         arcadeBase.setup();
         vm.stopPrank();
         arcade = arcadeBase.arcade();
@@ -76,14 +76,5 @@ contract ArcadeTest is Test {
         assertEq(arcade.currentPlayer(), player1);
     }
 
-    function testExploit() public {
-        vm.warp(10 minutes);
-        vm.startPrank(you);
-        arcade.earn(); // Earn 10 points
-        arcade.redeem(); // Mint 10 PRIZE
-        arcade.changePlayer(player4); // Mint 190 PRIZE
-        arcadeBase.solve();
-        assertTrue(arcadeBase.isSolved());
-        vm.stopPrank();
-    }
+    function testExploit() public {}
 }

