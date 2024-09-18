@@ -25,6 +25,7 @@ contract CasinoTest is Test {
     }
 
     function testExploit() public {
+        vm.startPrank(you);
         uint256 height = block.number;
         while (casino.slot() == 0) {
             vm.roll(++height);

