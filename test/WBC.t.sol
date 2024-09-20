@@ -22,24 +22,22 @@ contract WBCTest is Test {
         wbc = base.wbc();
     }
 
-    function testExploit() external {}
+    function testExploit() external {
+        for (uint256 i = 0; i < 1000; ++i) {
+            try new Ans{salt: bytes32(i)}(address(wbc)) returns (Ans _ans) {
+                ans = _ans;
+                break;
+            } catch {}
+        }
+        ans.win();
+        base.solve();
+        assertTrue(base.isSolved());
+    }
 
     function testCannotHomeRunEasily() external {
         vm.expectRevert("try again");
         wbc.homerun();
         vm.expectRevert();
         base.solve();
-    }
-
-    function testSalt() external {
-        uint256 salt;
-
-        for (uint256 i = 0; i < 1000; ++i) {
-            try new Ans{salt: bytes32(i)}(address(wbc)) returns (Ans) {
-                salt = i;
-                break;
-            } catch {}
-        }
-        console2.log(salt);
     }
 }

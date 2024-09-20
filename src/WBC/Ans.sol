@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./WBC.sol";
+import {console} from "forge-std/Test.sol";
 
 contract Ans {
     WBC public immutable wbc;
@@ -29,7 +30,7 @@ contract Ans {
     }
 
     function shout() external view returns (string memory) {
-        if (gasleft() >= 8797746687695915000) {
+        if (gasleft() % 3 == 2) {
             return "I'm the best";
         } else {
             return "We are the champion!";
